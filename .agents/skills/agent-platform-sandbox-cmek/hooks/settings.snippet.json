@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "agent-sandbox cleanup --quiet || true",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "agent-sandbox status --brief || true",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
