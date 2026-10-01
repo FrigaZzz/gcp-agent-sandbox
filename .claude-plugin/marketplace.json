@@ -1,0 +1,14 @@
+{
+  "name": "gcp-agent-sandbox",
+  "description": "Skill and CLI for running code in Google Cloud Agent Platform sandboxes",
+  "owner": {
+    "name": "frigazzz"
+  },
+  "plugins": [
+    {
+      "name": "agent-sandbox",
+      "source": "./",
+      "description": "Run code and files in CMEK-encrypted Google Cloud Agent Platform sandboxes; stops them when the session ends."
+    }
+  ]
+}

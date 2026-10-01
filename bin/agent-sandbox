@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Launcher for the agent-sandbox CLI. Used when this repo is installed as a Claude Code plugin
+# (bin/ is put on PATH) or run from a checkout. It builds a private virtualenv on first use, so the
+# user never has to `pip install` anything.
+#
+#   uv present  -> `uv run` against the plugin directory (fast, reproducible via uv.lock)
+#   no uv       -> python3 -m venv + pip install
+#
+# Environment: AGENT_SANDBOX_VENV overrides the venv location (default ~/.cache/agent-sandbox).
+set -euo pipefail
+
+# Resolve the plugin root even when invoked through a symlink.
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+ROOT="$(cd -P "$(dirname "$SOURCE")/.." && pwd)"
+
+# Fast path for the session hooks: with nothing recorded in the ledger there is nothing to clean up
+# or warn about, so skip building/starting the Python environment entirely (zero cost, no credentials).
+STATE="${AGENT_SANDBOX_STATE:-$HOME/.agent-sandbox/state.json}"
+ledger_empty() { [ ! -f "$STATE" ] || grep -q '"sandboxes": {}' "$STATE"; }
+case "${1:-}" in
+  cleanup)
+    case " $* " in *" --orphans "*|*" --everything "*) ;; *) ledger_empty && exit 0 ;; esac ;;
+  status)
+    case " $* " in *" --brief "*) ledger_empty && exit 0 ;; esac ;;
+esac
+
+KEY="$(printf '%s' "$ROOT" | cksum | cut -d' ' -f1)"   # new plugin version => new directory => new venv
+VENV="${AGENT_SANDBOX_VENV:-${XDG_CACHE_HOME:-$HOME/.cache}/agent-sandbox}/venv-$KEY"
+
+if command -v uv >/dev/null 2>&1; then
+  [ -d "$VENV" ] || echo "agent-sandbox: first run, installing dependencies (about a minute)..." >&2
+  export UV_PROJECT_ENVIRONMENT="$VENV"
+  exec uv run --quiet --frozen --no-dev --project "$ROOT" agent-sandbox "$@"
+fi
+
+PY="$(command -v python3 || true)"
+if [ -z "$PY" ]; then
+  echo '{"ok": false, "error": "Neither uv nor python3 was found.", "hint": "Install uv: https://docs.astral.sh/uv/ (or Python >= 3.10)."}' >&2
+  exit 1
+fi
+if [ ! -x "$VENV/bin/agent-sandbox" ]; then
+  echo "agent-sandbox: first run, creating a virtualenv and installing dependencies (about a minute)..." >&2
+  "$PY" -m venv "$VENV"
+  "$VENV/bin/pip" install --quiet "$ROOT"
+fi
+exec "$VENV/bin/agent-sandbox" "$@"

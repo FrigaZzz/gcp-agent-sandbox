@@ -1,0 +1,23 @@
+{
+  "name": "agent-sandbox",
+  "displayName": "Agent Platform Sandbox (CMEK)",
+  "version": "0.2.0",
+  "description": "Run code and files in Google Cloud Agent Platform sandboxes (CMEK, billed per second) with safe start/run/stop, an end-of-session cleanup hook, and a full setup + troubleshooting guide.",
+  "author": {
+    "name": "frigazzz"
+  },
+  "homepage": "https://github.com/FrigaZzz/gcp-agent-sandbox",
+  "repository": "https://github.com/FrigaZzz/gcp-agent-sandbox",
+  "license": "MIT",
+  "keywords": [
+    "gcp",
+    "sandbox",
+    "cmek",
+    "code-execution",
+    "vertex-ai",
+    "agent-platform"
+  ],
+  "skills": [
+    "./.agents/skills/"
+  ]
+}

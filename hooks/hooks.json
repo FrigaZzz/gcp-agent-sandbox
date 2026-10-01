@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/agent-sandbox",
+            "args": ["cleanup", "--quiet"],
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/bin/agent-sandbox",
+            "args": ["status", "--brief"],
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

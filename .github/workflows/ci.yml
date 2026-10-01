@@ -1,0 +1,23 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Offline tests (fake SDK, no cloud access)
+        run: uv run --frozen --python ${{ matrix.python }} --extra dev pytest
+      - name: Plugin files are valid JSON
+        run: python3 -c "import json,sys; [json.load(open(f)) for f in ('.claude-plugin/plugin.json','.claude-plugin/marketplace.json','hooks/hooks.json')]"
+      - name: Launcher is executable and the CLI starts
+        run: |
+          test -x bin/agent-sandbox
+          bin/agent-sandbox --version
