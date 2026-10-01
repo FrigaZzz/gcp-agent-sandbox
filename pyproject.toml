@@ -10,13 +10,13 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [{name = "FrigaZzz"}]
+dependencies = [
+    "google-cloud-aiplatform[agent_engines]==2.3.0",
+]
 
 [project.urls]
 Homepage = "https://github.com/FrigaZzz/gcp-agent-sandbox"
 Repository = "https://github.com/FrigaZzz/gcp-agent-sandbox"
-dependencies = [
-    "google-cloud-aiplatform[agent_engines]==2.3.0",
-]
 
 [project.optional-dependencies]
 dev = [
