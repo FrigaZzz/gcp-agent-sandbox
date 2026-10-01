@@ -1,0 +1,6 @@
+transaction_id,department,amount,tax_rate
+tx_101,Engineering,150.00,0.22
+tx_102,Marketing,85.50,0.22
+tx_103,Design,45.00,0.22
+tx_104,Engineering,320.00,0.22
+tx_105,Operations,99.50,0.22

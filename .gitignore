@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments & Virtual Envs
+.venv/
+.venv*/
+venv/
+ENV/
+env/
+
+# Sensitive Environment Configurations
+.env
+!.env.example
+
+# Temporary Run Artifacts & Generated Files
+results/
+results-shell/
+sandbox-results/
+input.csv
+*.tar.gz
+*.log
+
+# Packaging & Distribution
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE & OS Files
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-sandbox"
+version = "0.2.0"
+description = "CLI, Python library and Claude skill for running code in Google Cloud Agent Platform Sandboxes protected by CMEK"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "FrigaZzz"}]
+
+[project.urls]
+Homepage = "https://github.com/FrigaZzz/gcp-agent-sandbox"
+Repository = "https://github.com/FrigaZzz/gcp-agent-sandbox"
+dependencies = [
+    "google-cloud-aiplatform[agent_engines]==2.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+agent-sandbox = "agent_sandbox.cli:main"
+agent-sandbox-cli = "agent_sandbox.repl:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short -m 'not e2e'"
+markers = ["e2e: live tests that create real (billed) sandboxes; run with `pytest -m e2e`"]
