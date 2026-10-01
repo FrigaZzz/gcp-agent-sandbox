@@ -36,7 +36,9 @@ command also carry a `hint` when the message is recognised.
 | Script ran but no output file came back | Only files **created under the working directory** during that call are returned. Not returned: uploaded files, files only touched/rewritten, anything in `/tmp` or outside `/home/bard`, files in dot-directories | Write results to a visible path under the cwd; to fetch an older or hidden file use `download` |
 | `exec` output lacks a file I created earlier | Files are only returned by the call that created them | Use `download PATH` |
 | Output is cut off | stdout > 20,000 chars | Read `stdout_full_path` (`<out>/_stdout.txt`) or raise `--max-output-chars` |
-| `ModuleNotFoundError` / `pip install` fails / DNS error | No outbound internet. Preinstalled: numpy, pandas, matplotlib | Use standard library or preinstalled packages; upload needed files |
+| `ModuleNotFoundError` / `pip install` fails / DNS error | No outbound internet. ~140 packages are preinstalled (list in `sandbox-environment.md`) | Use standard library or preinstalled packages; upload needed files |
+| `exit_status: -1` with empty stdout/stderr | Out of memory: the sandbox has 2 GB RAM and the process was killed (prints before the kill are lost too) | Process data in chunks, drop big objects, stay under ~1.5 GB |
+| `Can't pickle <function …>: attribute lookup … on __main__ failed` | `multiprocessing` inside `--code`/`exec` | Run a script file with `--bash 'python3 script.py'` and an `if __name__ == "__main__":` guard |
 | `Security: insecure filename in output` | The sandbox returned a path with `..`, absolute path, backslash or a symlink target | Intentional guard: nothing is written. Investigate the code that produced it |
 | `404 NOT_FOUND` on `exec`/`download`/`stop` | Sandbox expired (TTL) or was deleted | `agent-sandbox start` again; re-upload files. `status` prunes dead ledger entries |
 | `Several sandboxes are tracked and none is current` | Multiple started, current one stopped | Pass `--sandbox <id>` (see `status`) |

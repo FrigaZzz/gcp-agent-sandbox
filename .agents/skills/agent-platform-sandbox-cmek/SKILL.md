@@ -82,9 +82,11 @@ agent-sandbox run --bash 'python3 --version && ls -la'
   anything under `/tmp` or outside the working directory is not returned.
 * Large stdout is truncated at 20,000 chars (`--max-output-chars`); the full text is saved to
   `<out>/_stdout.txt`.
-* Environment (observed): Python 3.12 with numpy, pandas and matplotlib preinstalled, plus bash,
-  git, curl and tar; ~8 vCPU / 2 GB RAM; runs as root in `/home/bard`. **No outbound internet**
-  (DNS fails), so `pip install` of new packages and downloads will not work: use what is preinstalled.
+* Environment (observed): Python 3.12 with ~140 packages preinstalled (numpy, pandas, scipy, scikit-learn,
+  matplotlib, tensorflow, spacy, opencv, openpyxl, …), plus bash, git, curl, gcc and tar; 8 vCPU visible
+  (~2x parallel speedup measured) / **2 GB RAM** (exceeding it kills the run silently with `exit_status: -1`); runs
+  as root in `/home/bard`. **No outbound internet** (DNS fails), so `pip install` of new packages and downloads will
+  not work: use what is preinstalled. Full inventory, limits and quirks: `references/sandbox-environment.md`.
 
 ## Multi-step session (only when state must persist)
 
@@ -148,3 +150,5 @@ the same config files as the CLI, so run `agent-sandbox config init` first.
 | `references/billing-and-hooks.md` | cost safety layers, installing the end-of-session hook |
 | `references/sdk-contracts.md` | writing Python against `agentplatform` directly |
 | `references/shell-sandboxes.md` | bash/container sandboxes and templates |
+| `references/sandbox-environment.md` | what is installed (Python, libs, tools), measured RAM/CPU/disk/time limits, execution quirks, a "will my job fit" checklist |
+| `references/python-packages.txt` | exact `name==version` list of every preinstalled Python package (grep it before assuming a lib exists) |
