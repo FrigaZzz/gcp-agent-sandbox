@@ -781,7 +781,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = build_parser()
-    args = parser.parse_args(argv)
+    args, extra = parser.parse_known_args(argv)
+    # argparse closes an `nargs="*"` positional as soon as an option interrupts it, so in
+    # `config set --scope project KEY=VALUE` (Python >= 3.12) the pairs arrive as leftovers.
+    if extra and hasattr(args, "values") and not any(e.startswith("-") for e in extra):
+        args.values = [*args.values, *extra]
+    elif extra:
+        parser.error(f"unrecognized arguments: {' '.join(extra)}")
     try:
         return args.func(args)
     except UsageError as exc:
